@@ -17,6 +17,13 @@ class DishCollection extends ResourceCollection
      */
     public function toArray($request): array|JsonSerializable|Arrayable
     {
-        return ['data' => $this->collection];
+        $data = $this->collection->map(function ($dish){
+            return[
+                'id' => $dish->id,
+                'name' => $dish->name,
+                'price' => $dish->price
+            ];
+        });
+        return ['data' => $data];
     }
 }
