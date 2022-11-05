@@ -15,11 +15,13 @@ class DatabaseSeeder extends Seeder
         $this->call([
 
 //            Real data
- //                       UsersSeeder::class,
+
+//                       UsersSeeder::class,
 
 //            Fake data
 
-                        DishSeeder::class
+                        DishSeeder::class,
+                        OrderSeeder::class
                     ]);
     }
 }
