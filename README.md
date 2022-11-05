@@ -1,66 +1,264 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Restaurant Laravel API
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+This is a simple project where you can manage dishes and orders.
 
-## About Laravel
+## Running the API
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+It's very simple to get the API up and running. First, create the database (and database
+user if necessary) and add them to the `.env` file.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+```
+DB_DATABASE=your_db_name
+DB_USERNAME=your_db_user
+DB_PASSWORD=your_password
+```
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Then:
 
-## Learning Laravel
+1. Install dependencies:
+   `composer install`
+2. Migrate database:
+   `php artisan migrate`
+3. If you need to insert to database a bunch of randomly generated dishes, run:
+   `php artisan db:seed`
+4. Run server:
+   `php artisan serve`
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+The API will be running on `localhost:8000`.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+## Using the API
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Get list of Dishes
 
-## Laravel Sponsors
+#### Request
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+`GET http://localhost:8000//api/dish/`
 
-### Premium Partners
+    curl --location -g --request GET 'http://localhost:8000//api/dish/' 
+    --header 'Accept: application/json'
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+#### Response
 
-## Contributing
+    {
+        "data": {
+            "data": [
+                {
+                    "id": 1,
+                    "name": "a",
+                    "price": 74.83
+                },
+                {
+                    "id": 2,
+                    "name": "vitae",
+                    "price": 597.51
+                },
+                {
+                    "id": 3,
+                    "name": "reprehenderit",
+                    "price": 807.33
+                }
+            ]
+        }
+    }
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+#### Optional Parameters
 
-## Code of Conduct
+These parameters are not required, but are possible to add:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+1. `page` - page of paginated data. Required with `limit`.
+2. `limit` - amount of records on page. Required with `page`.
+3. `order_by` - orders records by parameter. Available parameters are `name` and `price`.
 
-## Security Vulnerabilities
+### Create new Dish
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+#### Request
 
-## License
+`POST http://localhost:8000//api/dish/`
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+    curl --location --request POST 'http://localhost:8000//api/dish' 
+    --header 'Accept: application/json' 
+    --form 'name="spam and scrambled eggs"' 
+    --form 'price="420.99"'
+
+#### Response
+
+    {
+        "data": {
+            "id": 11,
+            "name": "spam and scrambled eggs",
+            "price": "420.99",
+            "updated_at": "2022-11-05T12:49:51.000000Z"
+        }
+    }
+
+
+#### Required Parameters
+
+Include all the following POST parameters when you request the url:
+
+1. `name` - this will be the name of dish.
+2. `price` - this will be the price of dish.
+
+### Update specific Dish
+
+#### Request
+
+`POST http://localhost:8000//api/dish/{{id}}`
+
+    curl --location --request POST 'http://localhost:8000//api/dish/1' 
+    --header 'Accept: application/json' 
+    --form 'name="spam and scrambled eggs"' 
+    --form 'price="480.99"'
+
+#### Response
+
+    {
+        "data": {
+            "id": 1,
+            "name": "spam and scrambled eggs",
+            "price": "480.99",
+            "updated_at": "2022-11-05T13:01:24.000000Z"
+        }
+    }
+
+#### Optional Parameters
+
+These parameters are not required, but are possible to add:
+
+1. `name` - this will be a new name of the dish.
+2. `price` - this will be a new price of the dish.
+
+### Delete specific Dish
+
+#### Request
+
+`DELETE http://localhost:8000//api/dish/{{id}}`
+
+    curl --location --request DELETE 'http://localhost:8000//api/dish/1' 
+    --header 'Accept: application/json' 
+
+#### Response
+
+    {
+        "data": null
+    }
+
+### Get list of Orders
+
+#### Request
+
+`GET http://localhost:8000//api/order/`
+
+    curl --location -g --request GET 'http://localhost:8000//api/order/' 
+    --header 'Accept: application/json'
+
+#### Response
+
+    {
+        "data": {
+            "data": [
+                {
+                    "id": 1,
+                    "status": "opened",
+                    "updated_at": "2022-11-05T14:31:27.000000Z",
+                    "total": 5633.25
+                },
+                {
+                    "id": 2,
+                    "status": "opened",
+                    "updated_at": "2022-11-05T14:31:27.000000Z",
+                    "total": 1852.92
+                },
+                {
+                    "id": 3,
+                    "status": "closed",
+                    "updated_at": "2022-11-05T14:31:27.000000Z",
+                    "total": 6298.400000000001
+                },
+                
+            ]
+        }
+    }
+
+#### Optional Parameters
+
+These parameters are not required, but are possible to add:
+
+1. `page` - page of paginated data. Required with `limit`.
+2. `limit` - amount of records on page. Required with `page`.
+
+### Create new Order or update existing one
+
+#### Request
+
+`POST http://localhost:8000//api/order/`
+
+    curl --location --request POST 'http://localhost:8000//api/order'
+    --header 'Accept: application/json' 
+
+#### Response
+
+    {
+        "data": {
+            "id": 11,
+            "status": null,
+            "updated_at": "2022-11-05T14:42:42.000000Z",
+            "dishes": [],
+            "total": 0
+        }
+    }
+
+
+#### Optional Parameters
+
+These parameters are not required, but are possible to add:
+
+1. `id` - request will update order with given ID instead of creating new one.
+2. `status` - status of the order. `opened` - the order is opened to modification, `closed` - the order is not allowed to edit.
+3. `dishes` - array of dishes that will be attached to the order.
+    1. `dishes[*][id]` - ID of the dish.
+   2. `dishes[*][amount]` - amount of the dish attached to the order.
+
+### Get specific Order
+
+#### Request
+
+`GET http://localhost:8000//api/order/{{id}}`
+
+    curl --location --request GET 'http://localhost:8000//api/order/1' 
+    --header 'Accept: application/json' 
+
+#### Response
+
+    {
+        "data": {
+            "id": 1,
+            "status": "opened",
+            "updated_at": "2022-11-05T14:31:27.000000Z",
+            "dishes": [
+                {
+                    "id": 6,
+                    "name": "hic",
+                    "price": 804.75,
+                    "amount": 7
+                }
+            ],
+            "total": 5633.25
+        }
+    }
+
+### Delete specific Order
+
+#### Request
+
+`DELETE http://localhost:8000//api/order/{{id}}`
+
+    curl --location --request DELETE 'http://localhost:8000//api/order/1' 
+    --header 'Accept: application/json' 
+
+#### Response
+
+    {
+        "data": null
+    }
+
