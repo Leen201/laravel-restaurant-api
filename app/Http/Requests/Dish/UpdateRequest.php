@@ -27,7 +27,7 @@ class UpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['string'],
+            'name' => ['required', 'string', 'unique:dishes,name'],
             'price' => ['numeric', 'min:0']
         ];
     }
