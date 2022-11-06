@@ -9,7 +9,6 @@ use App\Http\Requests\Dish\UpdateRequest;
 use App\Http\Resources\Dish\DishCollection;
 use App\Http\Resources\Dish\DishResource;
 use App\Http\Resources\Dish\PaginatedDishCollection;
-use App\Http\Resources\Order\OrderResource;
 use App\Interfaces\DishInterface;
 use App\Models\Dish;
 use App\Traits\ResponseApiTrait;
@@ -38,9 +37,9 @@ class DishRepository implements DishInterface
     public function store(StoreRequest $request): JsonResponse
     {
         $dish = Dish::create([
-            'name' => $request->name,
-            'price' => $request->price,
-            ]);
+                                 'name' => $request->name,
+                                 'price' => $request->price
+                             ]);
 
         return $this->successResponse(new DishResource($dish));
     }
@@ -49,10 +48,12 @@ class DishRepository implements DishInterface
     {
         $dish = Dish::findOrFail($request->id);
 
-        $dish->update($request->only([
-            'name',
-            'price'
-        ]));
+        $dish->update(
+            $request->only([
+                               'name',
+                               'price'
+                           ])
+        );
 
         return $this->successResponse(new DishResource($dish));
     }
